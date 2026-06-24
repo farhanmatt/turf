@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: turf-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: turfuser
+      POSTGRES_PASSWORD: turfpassword
+      POSTGRES_DB: turfdb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

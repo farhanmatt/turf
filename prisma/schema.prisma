@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String    @id @default(uuid())
+  name        String
+  phoneNumber String    @unique
+  role        String    @default("USER") // "USER" or "ADMIN"
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  bookings    Booking[]
+}
+
+model OTP {
+  id          String   @id @default(uuid())
+  phoneNumber String
+  code        String
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+}
+
+model TurfSettings {
+  id                    String            @id @default("default")
+  openingTime           String            // e.g. "06:00"
+  closingTime           String            // e.g. "22:00"
+  pricePerHour          Float             // e.g. 500.00
+  advancePaymentPercent Int               @default(50) // e.g. 50 = 50%
+  closedDays            ClosedDay[]
+  pricingRules          TimePricingRule[]
+}
+
+model ClosedDay {
+  id             String       @id @default(uuid())
+  date           String       // YYYY-MM-DD
+  turfSettingsId String
+  turfSettings   TurfSettings @relation(fields: [turfSettingsId], references: [id], onDelete: Cascade)
+
+  @@unique([date, turfSettingsId])
+}
+
+model TimePricingRule {
+  id             String       @id @default(uuid())
+  startTime      String       // e.g. "10:00"
+  endTime        String       // e.g. "18:00"; can wrap overnight
+  pricePerHour   Float
+  turfSettingsId String
+  turfSettings   TurfSettings @relation(fields: [turfSettingsId], references: [id], onDelete: Cascade)
+
+  @@index([turfSettingsId])
+}
+
+model Booking {
+  id               String   @id @default(uuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date             String   // YYYY-MM-DD format
+  startTime        Int      // e.g. 10 (for 10:00 AM)
+  endTime          Int      // e.g. 12 (for 12:00 PM)
+  totalAmount      Float
+  paidAmount       Float
+  status           String   @default("PENDING") // "PENDING", "CONFIRMED", "CANCELLED"
+  referenceDetails String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([date])
+}
