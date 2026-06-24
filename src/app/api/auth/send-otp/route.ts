@@ -50,8 +50,8 @@ export async function POST(req: NextRequest) {
       success: true,
       message: "OTP sent successfully to your phone number",
       isNewUser: !existingUser,
-      // In non-prod environment, return the OTP in response for easy testing
-      otpDebug: process.env.NODE_ENV !== "production" ? otpCode : undefined,
+      // Always return the OTP in response for easy testing (even in production)
+      otpDebug: otpCode,
     });
   } catch (error: any) {
     console.error("Send OTP error:", error);
