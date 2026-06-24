@@ -29,6 +29,8 @@ import {
   ChevronRight,
   TrendingUp,
   BookOpen,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 
 /* ─────────────────────────── types ─────────────────────────── */
@@ -132,6 +134,7 @@ export default function AdminDashboard() {
   /* admin login */
   const [adminUsername, setAdminUsername] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   /* dashboard data */
   const [settings, setSettings] = useState<TurfSettings | null>(null);
@@ -372,15 +375,24 @@ export default function AdminDashboard() {
               </div>
               <div className="space-y-1">
                 <label className="text-[11px] font-semibold text-slate-300">Password</label>
-                <input
-                  suppressHydrationWarning
-                  type="password"
-                  required
-                  placeholder="••••••••"
-                  value={adminPassword}
-                  onChange={(e) => setAdminPassword(e.target.value)}
-                  className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-xs text-slate-100 placeholder-slate-600 focus:border-emerald-500 focus:outline-none"
-                />
+                <div className="relative">
+                  <input
+                    suppressHydrationWarning
+                    type={showPassword ? "text" : "password"}
+                    required
+                    placeholder="••••••••"
+                    value={adminPassword}
+                    onChange={(e) => setAdminPassword(e.target.value)}
+                    className="w-full rounded-lg border border-slate-800 bg-slate-950 pl-3 pr-10 py-2 text-xs text-slate-100 placeholder-slate-600 focus:border-emerald-500 focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors focus:outline-none"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
               </div>
               <div className="bg-slate-950/60 rounded-lg border border-slate-800 p-3 text-[10px] text-slate-500 leading-relaxed">
                 <strong>Dev Note:</strong> Default login is <code>admin</code> / <code>adminpassword</code>
